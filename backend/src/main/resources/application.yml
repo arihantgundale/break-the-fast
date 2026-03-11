@@ -1,0 +1,92 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: break-the-fast
+  
+  # Default profile uses H2 for easy local development
+  datasource:
+    url: jdbc:h2:mem:breakthefast;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  jackson:
+    default-property-inclusion: non_null
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+    time-zone: UTC
+
+# ─── JWT Configuration ─────────────────────────────────────
+app:
+  jwt:
+    secret: ${JWT_SECRET:breakthefast-dev-secret-key-change-in-production-min-256-bits-long-key}
+    access-token-expiry-ms: 86400000    # 24 hours
+    refresh-token-expiry-ms: 604800000  # 7 days
+
+# ─── OTP Configuration ─────────────────────────────────────
+  otp:
+    length: 6
+    expiry-minutes: 5
+    max-attempts: 5
+    lockout-minutes: 15
+
+# ─── Twilio Configuration (WhatsApp + SMS) ─────────────────
+  twilio:
+    account-sid: ${TWILIO_ACCOUNT_SID:}
+    auth-token: ${TWILIO_AUTH_TOKEN:}
+    phone-number: ${TWILIO_PHONE_NUMBER:}
+    whatsapp-number: ${TWILIO_WHATSAPP_NUMBER:}
+
+# ─── SendGrid Configuration (Email) ────────────────────────
+  sendgrid:
+    api-key: ${SENDGRID_API_KEY:}
+    from-email: ${SENDGRID_FROM_EMAIL:noreply@breakthefast.com}
+    from-name: Break The Fast
+
+# ─── CORS ──────────────────────────────────────────────────
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+# ─── Admin Defaults ────────────────────────────────────────
+  admin:
+    default-email: ${ADMIN_EMAIL:admin@breakthefast.com}
+    default-password: ${ADMIN_PASSWORD:BreakTheFast@2026}
+
+---
+# MySQL profile for production
+spring:
+  config:
+    activate:
+      on-profile: mysql
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:breakthefast}?useSSL=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  h2:
+    console:
+      enabled: false
