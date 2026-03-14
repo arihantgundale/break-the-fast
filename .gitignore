@@ -30,3 +30,8 @@ Thumbs.db
 # ─── Logs ───────────────────────────────
 *.log
 logs/
+
+# ─── Presentation / Generator ───────────
+generate_pptx.py
+presentation.html
+*.pptx

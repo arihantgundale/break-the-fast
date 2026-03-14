@@ -1,21 +1,27 @@
+import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 
 export default function MenuItemCard({ item }) {
   const { addItem } = useCart();
+  const [imgError, setImgError] = useState(false);
 
   return (
     <div className="card group">
       {/* Image */}
       <div className="relative h-48 bg-gray-100 overflow-hidden">
-        {item.imageUrl ? (
+        {item.imageUrl && !imgError ? (
           <img
             src={item.imageUrl}
             alt={item.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
+            onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl">🍛</div>
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 to-red-50">
+            <span className="text-5xl mb-1">🍛</span>
+            <span className="text-xs text-gray-400 font-medium">{item.name}</span>
+          </div>
         )}
         {/* Badges */}
         <div className="absolute top-3 left-3 flex gap-2">
@@ -32,7 +38,7 @@ export default function MenuItemCard({ item }) {
       {/* Content */}
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-display text-lg font-bold text-charcoal">{item.name}</h3>
+          <h3 className="font-semibold text-lg text-charcoal">{item.name}</h3>
           <span className="text-primary font-bold text-lg">${Number(item.price).toFixed(2)}</span>
         </div>
 
