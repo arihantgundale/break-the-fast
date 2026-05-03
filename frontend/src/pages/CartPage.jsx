@@ -11,7 +11,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-cream">
-        <p className="text-6xl mb-6">🛒</p>
+        <FiShoppingCart className="w-16 h-16 mb-6 text-slate" />
         <h2 className="font-display text-2xl font-bold mb-2">Your cart is empty</h2>
         <p className="text-slate mb-6">Add some delicious dishes to get started!</p>
         <Link to="/menu" className="btn-primary">Browse Menu</Link>
@@ -36,7 +36,7 @@ export default function CartPage() {
                 {item.imageUrl ? (
                   <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-3xl">🍛</div>
+                  <div className="w-full h-full bg-gray-100" />
                 )}
               </div>
 
@@ -84,7 +84,7 @@ export default function CartPage() {
           </div>
 
           <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-4 mb-4 text-center">
-            <p className="text-secondary font-semibold">💵 Pay at Pickup — No Online Payment Required</p>
+            <p className="text-secondary font-semibold">Pay at Pickup — No Online Payment Required</p>
           </div>
 
           <div className="flex gap-4">

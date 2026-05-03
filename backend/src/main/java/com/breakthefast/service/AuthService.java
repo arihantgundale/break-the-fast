@@ -1,7 +1,9 @@
 package com.breakthefast.service;
 
 import com.breakthefast.dto.request.AdminLoginRequest;
+import com.breakthefast.dto.request.CustomerLoginRequest;
 import com.breakthefast.dto.request.CustomerProfileRequest;
+import com.breakthefast.dto.request.CustomerSignupVerifyRequest;
 import com.breakthefast.dto.request.OtpSendRequest;
 import com.breakthefast.dto.request.OtpVerifyRequest;
 import com.breakthefast.dto.response.AuthResponse;
@@ -94,43 +96,25 @@ public class AuthService {
     }
 
     /**
+     * Send OTP for customer signup
+     */
+    @Transactional
+    public void sendSignupOtp(OtpSendRequest request) {
+        String phone = request.getPhoneNumber();
+        if (customerRepository.existsByPhoneNumber(phone)) {
+            throw new BadRequestException("Account already exists. Please log in.");
+        }
+        sendOtp(request);
+    }
+
+    /**
      * Verify OTP and return JWT tokens
      */
     @Transactional
     public AuthResponse verifyOtp(OtpVerifyRequest request) {
         String phone = request.getPhoneNumber();
 
-        OtpRecord record = otpRecordRepository.findTopByPhoneNumberOrderByCreatedAtDesc(phone)
-                .orElseThrow(() -> new BadRequestException("No OTP found for this phone number. Request a new one."));
-
-        // Check lockout
-        if (record.getLockedUntil() != null && record.getLockedUntil().isAfter(Instant.now())) {
-            throw new OtpLockoutException("Account locked. Try again later.");
-        }
-
-        // Check expiry
-        if (record.getExpiresAt().isBefore(Instant.now())) {
-            throw new BadRequestException("OTP has expired. Request a new one.");
-        }
-
-        // Check if already used
-        if (record.getUsed()) {
-            throw new BadRequestException("OTP already used. Request a new one.");
-        }
-
-        // Verify OTP
-        if (!record.getOtpCode().equals(request.getOtpCode())) {
-            record.setFailedAttempts(record.getFailedAttempts() + 1);
-            if (record.getFailedAttempts() >= maxAttempts) {
-                record.setLockedUntil(Instant.now().plus(lockoutMinutes, ChronoUnit.MINUTES));
-            }
-            otpRecordRepository.save(record);
-            throw new BadRequestException("Invalid OTP. " + (maxAttempts - record.getFailedAttempts()) + " attempts remaining.");
-        }
-
-        // Mark OTP as used
-        record.setUsed(true);
-        otpRecordRepository.save(record);
+        verifyOtpRecord(phone, request.getOtpCode());
 
         // Find or create customer
         boolean isNewUser = !customerRepository.existsByPhoneNumber(phone);
@@ -156,6 +140,67 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .newUser(isNewUser)
+                .customer(mapToCustomerResponse(customer))
+                .build();
+    }
+
+    /**
+     * Verify signup OTP and create customer account
+     */
+    @Transactional
+    public AuthResponse verifySignupOtp(CustomerSignupVerifyRequest request) {
+        if (customerRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new BadRequestException("Account already exists. Please log in.");
+        }
+        if (customerRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("Email already in use. Please log in.");
+        }
+
+        verifyOtpRecord(request.getPhoneNumber(), request.getOtpCode());
+
+        Customer customer = Customer.builder()
+                .phoneNumber(request.getPhoneNumber())
+                .name(request.getName())
+                .email(request.getEmail())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .build();
+        customer = customerRepository.save(customer);
+
+        String accessToken = jwtUtil.generateAccessToken(customer.getId().toString(), UserRole.CUSTOMER.name());
+        String refreshToken = jwtUtil.generateRefreshToken(customer.getId().toString());
+
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .newUser(true)
+                .customer(mapToCustomerResponse(customer))
+                .build();
+    }
+
+    /**
+     * Customer login with phone + password
+     */
+    public AuthResponse customerLogin(CustomerLoginRequest request) {
+        Customer customer = customerRepository.findByPhoneNumber(request.getPhoneNumber())
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+
+        if (customer.getPasswordHash() == null) {
+            throw new BadRequestException("Password not set. Please sign up.");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), customer.getPasswordHash())) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+
+        String accessToken = jwtUtil.generateAccessToken(customer.getId().toString(), UserRole.CUSTOMER.name());
+        String refreshToken = jwtUtil.generateRefreshToken(customer.getId().toString());
+
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .newUser(false)
                 .customer(mapToCustomerResponse(customer))
                 .build();
     }
@@ -225,6 +270,35 @@ public class AuthService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         return mapToCustomerResponse(customer);
+    }
+
+    private void verifyOtpRecord(String phone, String otpCode) {
+        OtpRecord record = otpRecordRepository.findTopByPhoneNumberOrderByCreatedAtDesc(phone)
+                .orElseThrow(() -> new BadRequestException("No OTP found for this phone number. Request a new one."));
+
+        if (record.getLockedUntil() != null && record.getLockedUntil().isAfter(Instant.now())) {
+            throw new OtpLockoutException("Account locked. Try again later.");
+        }
+
+        if (record.getExpiresAt().isBefore(Instant.now())) {
+            throw new BadRequestException("OTP has expired. Request a new one.");
+        }
+
+        if (record.getUsed()) {
+            throw new BadRequestException("OTP already used. Request a new one.");
+        }
+
+        if (!record.getOtpCode().equals(otpCode)) {
+            record.setFailedAttempts(record.getFailedAttempts() + 1);
+            if (record.getFailedAttempts() >= maxAttempts) {
+                record.setLockedUntil(Instant.now().plus(lockoutMinutes, ChronoUnit.MINUTES));
+            }
+            otpRecordRepository.save(record);
+            throw new BadRequestException("Invalid OTP. " + (maxAttempts - record.getFailedAttempts()) + " attempts remaining.");
+        }
+
+        record.setUsed(true);
+        otpRecordRepository.save(record);
     }
 
     private String generateOtp() {

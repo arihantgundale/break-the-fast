@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyOrders } from '../services/endpoints';
 import OrderStatusStepper from '../components/orders/OrderStatusStepper';
+import { FiClipboard } from 'react-icons/fi';
 
 export default function DashboardPage() {
   const [orders, setOrders] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     fetchOrders();
@@ -19,6 +21,7 @@ export default function DashboardPage() {
       .then((res) => {
         setOrders(res.data.data);
         setTotalPages(res.data.totalPages);
+        setLastUpdated(new Date());
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -27,10 +30,23 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-cream py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-wrap gap-4 justify-between items-center mb-8">
           <h1 className="font-display text-3xl font-bold">My Orders</h1>
-          <Link to="/dashboard/profile" className="btn-outline text-sm py-2 px-4">Edit Profile</Link>
+          <div className="flex gap-3">
+            <button
+              onClick={fetchOrders}
+              className="btn-outline text-sm py-2 px-4"
+              disabled={loading}
+            >
+              Refresh
+            </button>
+            <Link to="/dashboard/profile" className="btn-outline text-sm py-2 px-4">Edit Profile</Link>
+          </div>
         </div>
+
+        {lastUpdated && !loading && (
+          <p className="text-xs text-slate mb-4">Last updated: {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>
+        )}
 
         {loading ? (
           <div className="text-center py-20">
@@ -38,7 +54,7 @@ export default function DashboardPage() {
           </div>
         ) : orders.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-4xl mb-4">📋</p>
+            <FiClipboard className="w-12 h-12 mx-auto mb-4 text-slate" />
             <h2 className="font-display text-xl font-bold mb-2">No orders yet</h2>
             <Link to="/menu" className="btn-primary mt-4 inline-block">Browse Menu</Link>
           </div>
@@ -62,7 +78,7 @@ export default function DashboardPage() {
 
                 {order.estimatedReadyTime && (
                   <p className="text-sm text-secondary mt-3 text-center">
-                    ⏰ Estimated ready: {new Date(order.estimatedReadyTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                    Estimated ready: {new Date(order.estimatedReadyTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </p>
                 )}
 

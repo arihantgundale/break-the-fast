@@ -7,6 +7,15 @@ export const sendOtp = (phoneNumber) =>
 export const verifyOtp = (phoneNumber, otpCode) =>
   api.post('/auth/otp/verify', { phoneNumber, otpCode });
 
+export const sendSignupOtp = (phoneNumber) =>
+  api.post('/auth/customer/signup/otp/send', { phoneNumber });
+
+export const verifySignupOtp = (payload) =>
+  api.post('/auth/customer/signup/otp/verify', payload);
+
+export const customerLogin = (phoneNumber, password) =>
+  api.post('/auth/customer/login', { phoneNumber, password });
+
 export const adminLogin = (email, password) =>
   api.post('/auth/admin/login', { email, password });
 
@@ -58,6 +67,9 @@ export const adminResendNotification = (orderId) =>
   api.post(`/admin/orders/${orderId}/notify/resend`);
 
 export const adminGetSummary = () => api.get('/admin/orders/summary');
+
+export const adminGetDashboard = (range = 'weekly') =>
+  api.get('/admin/dashboard', { params: { range } });
 
 // ─── Admin: Menu ───────────────────────────────────────────
 export const adminCreateMenuItem = (data) =>

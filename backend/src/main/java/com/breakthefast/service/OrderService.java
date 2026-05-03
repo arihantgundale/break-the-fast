@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,6 +32,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MenuItemRepository menuItemRepository;
     private final CustomerRepository customerRepository;
+    private final OrderItemRepository orderItemRepository;
     private final NotificationService notificationService;
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -289,6 +292,75 @@ public class OrderService {
         return OrderSummaryResponse.builder()
                 .totalOrders(total)
                 .statusCounts(statusCounts)
+                .build();
+    }
+
+    // ─── Admin: Dashboard Summary ────────────────────────────
+
+    public AdminDashboardResponse getDashboardSummary(String range) {
+        int days = "monthly".equalsIgnoreCase(range) ? 30 : 7;
+
+        LocalDate endDate = LocalDate.now(ZoneOffset.UTC);
+        LocalDate startDate = endDate.minusDays(days - 1L);
+
+        Instant startInstant = startDate.atStartOfDay(ZoneOffset.UTC).toInstant();
+        Instant endInstant = endDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().minusMillis(1);
+
+        List<Order> orders = orderRepository.findByCreatedAtBetween(startInstant, endInstant);
+        long totalCustomers = customerRepository.count();
+
+        Map<LocalDate, Long> orderCounts = new LinkedHashMap<>();
+        Map<LocalDate, BigDecimal> revenueTotals = new LinkedHashMap<>();
+
+        LocalDate cursor = startDate;
+        while (!cursor.isAfter(endDate)) {
+            orderCounts.put(cursor, 0L);
+            revenueTotals.put(cursor, BigDecimal.ZERO);
+            cursor = cursor.plusDays(1);
+        }
+
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        for (Order order : orders) {
+            LocalDate orderDate = order.getCreatedAt().atZone(ZoneOffset.UTC).toLocalDate();
+            if (!orderCounts.containsKey(orderDate)) {
+                continue;
+            }
+            orderCounts.put(orderDate, orderCounts.get(orderDate) + 1);
+            revenueTotals.put(orderDate, revenueTotals.get(orderDate).add(order.getTotalAmount()));
+            totalRevenue = totalRevenue.add(order.getTotalAmount());
+        }
+
+        long totalOrders = orders.size();
+        BigDecimal averageOrderValue = totalOrders == 0
+                ? BigDecimal.ZERO
+                : totalRevenue.divide(BigDecimal.valueOf(totalOrders), 2, java.math.RoundingMode.HALF_UP);
+
+        List<LocalDate> labels = new ArrayList<>(orderCounts.keySet());
+        List<Long> ordersSeries = new ArrayList<>(orderCounts.values());
+        List<BigDecimal> revenueSeries = new ArrayList<>(revenueTotals.values());
+
+        List<TopProductResponse> topProducts = orderItemRepository
+            .findTopProducts(startInstant, endInstant, PageRequest.of(0, 5))
+            .stream()
+            .map(row -> TopProductResponse.builder()
+                .menuItemId((UUID) row[0])
+                .name((String) row[1])
+                .totalQuantity(((Number) row[2]).longValue())
+                .totalRevenue((BigDecimal) row[3])
+                .build())
+            .toList();
+
+        return AdminDashboardResponse.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .totalOrders(totalOrders)
+            .totalCustomers(totalCustomers)
+                .totalRevenue(totalRevenue)
+                .averageOrderValue(averageOrderValue)
+                .labels(labels)
+                .ordersSeries(ordersSeries)
+                .revenueSeries(revenueSeries)
+            .topProducts(topProducts)
                 .build();
     }
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getMyOrder } from '../services/endpoints';
 import OrderStatusStepper from '../components/orders/OrderStatusStepper';
+import { FiCheckCircle } from 'react-icons/fi';
 
 export default function OrderConfirmationPage() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ export default function OrderConfirmationPage() {
   return (
     <div className="min-h-screen bg-cream py-12">
       <div className="max-w-2xl mx-auto px-4 text-center">
-        <div className="text-6xl mb-6">🎉</div>
+        <FiCheckCircle className="w-16 h-16 mx-auto mb-6 text-pure-veg" />
         <h1 className="font-display text-4xl font-bold text-primary mb-2">Order Confirmed!</h1>
         <p className="text-slate text-lg mb-8">
           Your order <span className="font-bold text-charcoal">{order.orderNumber}</span> has been received.
@@ -50,7 +51,7 @@ export default function OrderConfirmationPage() {
         </div>
 
         <div className="bg-secondary/10 border border-secondary/30 rounded-xl p-4 mb-8">
-          <p className="font-semibold text-secondary">💵 Remember: Pay at Pickup</p>
+          <p className="font-semibold text-secondary">Pay at Pickup</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -17,13 +17,13 @@ export function CartProvider({ children }) {
     localStorage.setItem('btf_cart', JSON.stringify(items));
   }, [items]);
 
-  const addItem = (menuItem) => {
+  const addItem = (menuItem, quantity = 1) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.menuItemId === menuItem.id);
       if (existing) {
         toast.success(`Updated ${menuItem.name} quantity`);
         return prev.map((i) =>
-          i.menuItemId === menuItem.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.menuItemId === menuItem.id ? { ...i, quantity: i.quantity + quantity } : i
         );
       }
       toast.success(`Added ${menuItem.name} to cart`);
@@ -34,7 +34,7 @@ export function CartProvider({ children }) {
           name: menuItem.name,
           price: menuItem.price,
           imageUrl: menuItem.imageUrl,
-          quantity: 1,
+          quantity,
         },
       ];
     });

@@ -24,6 +24,8 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     // Customer orders
     Page<Order> findByCustomerIdOrderByCreatedAtDesc(UUID customerId, Pageable pageable);
 
+    List<Order> findByCreatedAtBetween(Instant startDate, Instant endDate);
+
     // Admin: filter orders
     @Query("SELECT o FROM Order o WHERE " +
            "(:status IS NULL OR o.status = :status) AND " +

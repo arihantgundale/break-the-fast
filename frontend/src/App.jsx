@@ -12,6 +12,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import AboutPage from './pages/AboutPage';
@@ -19,6 +20,7 @@ import CateringPage from './pages/CateringPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminQuickEntryPage from './pages/AdminQuickEntryPage';
 import AdminMenuPage from './pages/AdminMenuPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
 /* ─── Route guards ─── */
 function PrivateRoute({ children }) {
@@ -77,6 +79,7 @@ export default function App() {
             <Route path="/catering" element={<CustomerLayout><CateringPage /></CustomerLayout>} />
             <Route path="/cart" element={<CustomerLayout><CartPage /></CustomerLayout>} />
             <Route path="/login" element={<CustomerLayout><LoginPage /></CustomerLayout>} />
+            <Route path="/signup" element={<CustomerLayout><SignupPage /></CustomerLayout>} />
 
             {/* ───── Authenticated customer pages ───── */}
             <Route
@@ -116,6 +119,10 @@ export default function App() {
             <Route
               path="/admin/orders"
               element={<AdminRoute><AdminOrdersPage /></AdminRoute>}
+            />
+            <Route
+              path="/admin/dashboard"
+              element={<AdminRoute><AdminDashboardPage /></AdminRoute>}
             />
             <Route
               path="/admin/quick-entry"

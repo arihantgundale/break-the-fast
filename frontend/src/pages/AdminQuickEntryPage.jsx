@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import AdminNavbar from '../components/layout/AdminNavbar';
 import { getMenuItems, adminQuickEntry } from '../services/endpoints';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -68,14 +68,7 @@ export default function AdminQuickEntryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-charcoal text-white py-6">
-        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <h1 className="font-display text-2xl font-bold">📞 Quick Phone-Order Entry</h1>
-          <Link to="/admin/orders" className="text-secondary hover:text-white transition-colors font-semibold">
-            ← Back to Orders
-          </Link>
-        </div>
-      </div>
+      <AdminNavbar title="Quick Phone-Order Entry" subtitle="Create orders for phone customers" />
 
       <div className="max-w-6xl mx-auto px-4 py-8 grid md:grid-cols-2 gap-8">
         {/* Left – Menu catalogue */}
@@ -108,7 +101,7 @@ export default function AdminQuickEntryPage() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="+1 (555) 123-4567"
+                placeholder="+1 (704) 657-4898"
                 className="input-field"
                 required
               />
@@ -171,7 +164,7 @@ export default function AdminQuickEntryPage() {
 
           {success && (
             <div className="card p-4 bg-green-50 border-green-200 text-center">
-              <p className="text-green-700 font-bold text-lg">✅ {success.orderNumber}</p>
+              <p className="text-green-700 font-bold text-lg">{success.orderNumber}</p>
               <p className="text-sm text-slate">Created • Estimated pickup: {success.estimatedPickupTime || '—'}</p>
             </div>
           )}

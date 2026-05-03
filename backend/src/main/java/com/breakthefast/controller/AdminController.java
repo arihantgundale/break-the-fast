@@ -100,6 +100,15 @@ public class AdminController {
         return ResponseEntity.ok(orderService.getOrderSummary());
     }
 
+    /**
+     * GET /api/v1/admin/dashboard?range=weekly|monthly — Dashboard metrics
+     */
+    @GetMapping("/dashboard")
+    public ResponseEntity<AdminDashboardResponse> getDashboard(
+            @RequestParam(defaultValue = "weekly") String range) {
+        return ResponseEntity.ok(orderService.getDashboardSummary(range));
+    }
+
     // ─── MENU MANAGEMENT ────────────────────────────────────────
 
     /**

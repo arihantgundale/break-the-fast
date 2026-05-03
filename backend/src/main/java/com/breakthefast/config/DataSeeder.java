@@ -62,22 +62,22 @@ public class DataSeeder implements CommandLineRunner {
         createItem("Poha", "Flattened rice tempered with mustard seeds, turmeric, peanuts, and fresh curry leaves. A beloved Maharashtrian morning staple.",
                 MenuCategory.BREAKFAST, "8.99", "12 oz", true, false,
                 "Poha has been a cornerstone of Indian breakfast culture for centuries, originating in Maharashtra and Gujarat.",
-                "https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777809903/360_F_472017398_v6JPATak7p8VenbHzoW3O0PhGA3fircQ_u2zvis.jpg");
 
         createItem("Aloo Paratha", "Golden whole-wheat flatbread stuffed with spiced mashed potatoes, served with butter and yogurt.",
                 MenuCategory.BREAKFAST, "10.99", "2 pieces", true, false,
                 "Paratha tradition traces to the Mughal era, where stuffed breads were a royal breakfast delicacy.",
-                "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810183/images_nnk992.jpg");
 
         createItem("Masala Dosa", "Crispy rice-lentil crepe filled with spiced potato masala, served with coconut chutney and sambar.",
                 MenuCategory.BREAKFAST, "11.99", "1 dosa", true, false,
                 "Dosa originated in South India over a thousand years ago and remains one of the most iconic vegetarian dishes globally.",
-                "https://images.unsplash.com/photo-1668236543090-82bbe5ce830c?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810184/images_1_iumcui.jpg");
 
         createItem("Upma", "Semolina cooked with vegetables, mustard seeds, and cashews. A comforting South Indian breakfast.",
                 MenuCategory.BREAKFAST, "7.99", "10 oz", true, false,
                 "Upma is a staple in Karnataka and Tamil Nadu, known for its simplicity and nutritional balance.",
-                "https://images.unsplash.com/photo-1567337710282-00832b415979?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810953/download_hpvdfz.jpg");
 
         createItem("Idli Sambar", "Steamed rice cakes served with lentil-vegetable sambar and coconut chutney.",
                 MenuCategory.BREAKFAST, "9.49", "4 pieces", true, false,
@@ -88,28 +88,28 @@ public class DataSeeder implements CommandLineRunner {
         createItem("North Indian Thali", "Complete platter: 2 curries, dal, rice, 3 rotis, raita, salad, pickle, and dessert.",
                 MenuCategory.LUNCH_THALI, "16.99", "Full plate", true, false,
                 "The thali represents the Indian philosophy of a balanced meal — all six tastes (sweet, sour, salty, bitter, pungent, astringent) on one plate.",
-                "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810954/download_1_ovsp0s.jpg");
 
         createItem("South Indian Thali", "Rice, sambar, rasam, kootu, poriyal, papad, pickle, and payasam.",
                 MenuCategory.LUNCH_THALI, "15.99", "Full plate", true, false,
                 "South Indian thalis follow Ayurvedic principles, with each component contributing to digestive harmony.",
-                "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810953/download_2_lu3j9m.jpg");
 
         createItem("Gujarati Thali", "A sweet-savory symphony: dal, kadhi, shak, rotli, rice, pickle, farsan, and sweet.",
                 MenuCategory.LUNCH_THALI, "17.99", "Full plate", true, false,
                 "Gujarat's thali tradition is legendary — every meal is a celebration of the state's rich vegetarian culinary heritage.",
-                "https://images.unsplash.com/photo-1606491956689-2ea866880049?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810954/download_3_nfcdd9.jpg");
 
         // ─── SNACKS & CHAAT ────────────────────────────────────
         createItem("Pani Puri", "Crispy hollow puris filled with spiced potato, chickpeas, and tangy mint water.",
                 MenuCategory.SNACKS_CHAAT, "8.49", "8 pieces", true, true,
                 "Pani Puri — known by different names across India — is the country's most beloved street food, dating back centuries.",
-                "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810954/download_4_x49dxn.jpg");
 
         createItem("Bhel Puri", "Puffed rice tossed with chutneys, sev, onions, and coriander. Mumbai's signature snack.",
                 MenuCategory.SNACKS_CHAAT, "7.99", "8 oz", true, false,
                 "Born on the beaches of Mumbai, Bhel Puri captures the spirit of India's street food revolution.",
-                "https://images.unsplash.com/photo-1606491956689-2ea866880049?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810954/download_5_panzri.jpg");
 
         createItem("Samosa (2 pcs)", "Crispy pastry pyramids filled with spiced potatoes and peas, served with mint and tamarind chutneys.",
                 MenuCategory.SNACKS_CHAAT, "6.99", "2 pieces", true, true,
@@ -119,7 +119,7 @@ public class DataSeeder implements CommandLineRunner {
         createItem("Dahi Vada", "Soft lentil dumplings soaked in seasoned yogurt, topped with sweet and tangy chutneys.",
                 MenuCategory.SNACKS_CHAAT, "8.99", "3 pieces", true, false,
                 "Dahi Vada appears in ancient Indian texts and remains a festive favorite across every region.",
-                "https://images.unsplash.com/photo-1567337710282-00832b415979?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777810954/download_6_t8ixd9.jpg");
 
         // ─── SWEETS & DESSERTS ─────────────────────────────────
         createItem("Gulab Jamun", "Golden milk-solid dumplings soaked in rose-cardamom syrup. India's most loved dessert.",

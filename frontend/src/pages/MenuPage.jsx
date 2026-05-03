@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { getMenuItems, getCategories, searchMenu } from '../services/endpoints';
-import MenuItemCard from '../components/menu/MenuItemCard';
+import MenuItemModal from '../components/menu/MenuItemCard';
+import MenuItemTile from '../components/menu/MenuItemTile';
 import { FiSearch } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 const CATEGORY_LABELS = {
-  BREAKFAST: '🌅 Breakfast',
-  LUNCH_THALI: '🍛 Lunch Thali',
-  SNACKS_CHAAT: '🥟 Snacks & Chaat',
-  SWEETS_DESSERTS: '🍮 Sweets & Desserts',
-  DINNER: '🌙 Dinner',
-  CATERING: '🎉 Catering Platters',
+  BREAKFAST: 'Breakfast',
+  LUNCH_THALI: 'Lunch Thali',
+  SNACKS_CHAAT: 'Snacks & Chaat',
+  SWEETS_DESSERTS: 'Sweets & Desserts',
+  DINNER: 'Dinner',
+  CATERING: 'Catering Platters',
 };
 
 export default function MenuPage() {
@@ -18,9 +20,13 @@ export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
-    getCategories().then((res) => setCategories(res.data)).catch(() => {});
+    getCategories()
+      .then((res) => setCategories(res.data))
+      .catch(() => toast.error('Failed to load categories'));
+
     fetchItems();
   }, []);
 
@@ -28,7 +34,7 @@ export default function MenuPage() {
     setLoading(true);
     getMenuItems(category)
       .then((res) => setItems(res.data))
-      .catch(() => {})
+      .catch(() => toast.error('Failed to load menu'))
       .finally(() => setLoading(false));
   };
 
@@ -45,25 +51,34 @@ export default function MenuPage() {
 
   const handleSearch = (e) => {
     e.preventDefault();
+
     if (!searchQuery.trim()) {
       fetchItems(activeCategory);
       return;
     }
+
     setLoading(true);
     setActiveCategory(null);
+
     searchMenu(searchQuery)
       .then((res) => setItems(res.data))
-      .catch(() => {})
+      .catch(() => toast.error('Search failed'))
       .finally(() => setLoading(false));
   };
+
+  const handleSelect = (item) => setSelectedItem(item);
 
   return (
     <div className="min-h-screen bg-cream">
       {/* Header */}
       <div className="bg-primary text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-center">Our Menu</h1>
-          <p className="text-center text-gray-200 mt-2">Authentic flavors, handcrafted with tradition</p>
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-center">
+            Our Menu
+          </h1>
+          <p className="text-center text-gray-200 mt-2">
+            Authentic flavors, handcrafted with tradition
+          </p>
         </div>
       </div>
 
@@ -112,11 +127,22 @@ export default function MenuPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {items.map((item) => (
-              <MenuItemCard key={item.id} item={item} />
+              <MenuItemTile
+                key={item.id}
+                item={item}
+                onSelect={handleSelect}
+              />
             ))}
           </div>
         )}
       </div>
+
+      {selectedItem && (
+        <MenuItemModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+        />
+      )}
     </div>
   );
 }

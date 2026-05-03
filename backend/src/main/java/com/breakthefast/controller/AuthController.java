@@ -2,16 +2,13 @@ package com.breakthefast.controller;
 
 import com.breakthefast.dto.request.*;
 import com.breakthefast.dto.response.AuthResponse;
-import com.breakthefast.dto.response.CustomerResponse;
 import com.breakthefast.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -30,11 +27,38 @@ public class AuthController {
     }
 
     /**
+     * POST /api/v1/auth/customer/signup/otp/send — Send OTP for signup
+     */
+    @PostMapping("/customer/signup/otp/send")
+    public ResponseEntity<Map<String, String>> sendSignupOtp(@Valid @RequestBody OtpSendRequest request) {
+        authService.sendSignupOtp(request);
+        return ResponseEntity.ok(Map.of("message", "OTP sent successfully"));
+    }
+
+    /**
      * POST /api/v1/auth/otp/verify — Verify OTP; returns JWT + refresh token
      */
     @PostMapping("/otp/verify")
     public ResponseEntity<AuthResponse> verifyOtp(@Valid @RequestBody OtpVerifyRequest request) {
         AuthResponse response = authService.verifyOtp(request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * POST /api/v1/auth/customer/signup/otp/verify — Verify OTP and create account
+     */
+    @PostMapping("/customer/signup/otp/verify")
+    public ResponseEntity<AuthResponse> verifySignupOtp(@Valid @RequestBody CustomerSignupVerifyRequest request) {
+        AuthResponse response = authService.verifySignupOtp(request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * POST /api/v1/auth/customer/login — Customer phone+password login
+     */
+    @PostMapping("/customer/login")
+    public ResponseEntity<AuthResponse> customerLogin(@Valid @RequestBody CustomerLoginRequest request) {
+        AuthResponse response = authService.customerLogin(request);
         return ResponseEntity.ok(response);
     }
 

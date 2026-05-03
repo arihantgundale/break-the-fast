@@ -95,7 +95,7 @@ export default function CheckoutPage() {
 
         {/* Pay at Pickup Notice */}
         <div className="bg-secondary/10 border border-secondary/30 rounded-xl p-6 mb-6 text-center">
-          <p className="text-xl font-bold text-secondary mb-2">💵 Pay at Pickup</p>
+          <p className="text-xl font-bold text-secondary mb-2">Pay at Pickup</p>
           <p className="text-slate">No online payment required. Pay when you pick up your order.</p>
         </div>
 

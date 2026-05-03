@@ -7,12 +7,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <h3 className="font-display text-2xl font-bold text-secondary mb-3">Break The Fast</h3>
+            <h3 className="font-display text-2xl font-bold text-primary mb-3">Break The Fast</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Authentic Indian Cuisine — 100% Pure Vegetarian. Celebrating the rich heritage of Indian flavors, handcrafted with love and tradition.
             </p>
             <span className="inline-flex items-center gap-1 mt-3 bg-pure-veg text-white text-xs font-bold px-3 py-1 rounded-full">
-              🌿 100% Pure Vegetarian
+              100% Pure Vegetarian
             </span>
           </div>
 
@@ -31,8 +31,8 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-lg mb-3">Contact Us</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
-              <li className="flex items-center gap-2"><FiMapPin /> 123 Spice Lane, City, ST 12345</li>
-              <li className="flex items-center gap-2"><FiPhone /> (555) 123-4567</li>
+              <li className="flex items-center gap-2"><FiMapPin /> 14526 Princeton Ave, Savage, MN 55378, USA</li>
+              <li className="flex items-center gap-2"><FiPhone /> +1 (704) 657-4898</li>
               <li className="flex items-center gap-2"><FiMail /> hello@breakthefast.com</li>
             </ul>
             <div className="flex gap-4 mt-4">

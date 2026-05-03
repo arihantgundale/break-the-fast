@@ -1,3 +1,5 @@
+import { FiCheckCircle, FiFeather, FiBook, FiUsers } from 'react-icons/fi';
+
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
@@ -30,7 +32,7 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <span className="text-6xl block mb-4">🪷</span>
+            <FiCheckCircle className="w-12 h-12 mx-auto mb-4 text-pure-veg" />
             <h3 className="font-display text-xl font-bold text-charcoal mb-2">100% Pure Vegetarian</h3>
             <p className="text-slate text-sm">
               We are proudly and entirely vegetarian. No meat, no eggs — just wholesome plant-based goodness
@@ -46,12 +48,12 @@ export default function AboutPage() {
           <h2 className="section-title text-center mb-10">What We Stand For</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: '🌿', title: 'Fresh Ingredients', desc: 'Every dish is prepared fresh daily with locally sourced produce and authentic Indian spices.' },
-              { icon: '🙏', title: 'Authentic Recipes', desc: 'Time-honored recipes passed down through generations, prepared the traditional way.' },
-              { icon: '🌎', title: 'Community First', desc: 'We believe food brings people together. Our restaurant is a gathering place for the community.' },
+              { Icon: FiFeather, title: 'Fresh Ingredients', desc: 'Every dish is prepared fresh daily with locally sourced produce and authentic Indian spices.' },
+              { Icon: FiBook, title: 'Authentic Recipes', desc: 'Time-honored recipes passed down through generations, prepared the traditional way.' },
+              { Icon: FiUsers, title: 'Community First', desc: 'We believe food brings people together. Our restaurant is a gathering place for the community.' },
             ].map((v) => (
               <div key={v.title} className="card p-6 text-center">
-                <span className="text-4xl block mb-3">{v.icon}</span>
+                <v.Icon className="w-8 h-8 mx-auto mb-3 text-primary" />
                 <h3 className="font-display text-lg font-bold text-charcoal mb-2">{v.title}</h3>
                 <p className="text-slate text-sm">{v.desc}</p>
               </div>

@@ -1,8 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { adminGetOrders, adminGetSummary, adminUpdateStatus, adminCancelOrder } from '../services/endpoints';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
 import { FiPhone, FiGlobe, FiClock, FiFilter } from 'react-icons/fi';
+import AdminNavbar from '../components/layout/AdminNavbar';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
 const STATUS_COLORS = {
   RECEIVED: 'bg-blue-100 text-blue-700',
@@ -25,6 +27,8 @@ export default function AdminOrdersPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [wsConnected, setWsConnected] = useState(false);
+  const fetchOrdersRef = useRef(null);
 
   const fetchOrders = useCallback(() => {
     setLoading(true);
@@ -40,7 +44,27 @@ export default function AdminOrdersPage() {
     adminGetSummary().then((res) => setSummary(res.data)).catch(() => {});
   };
 
+  useEffect(() => { fetchOrdersRef.current = fetchOrders; }, [fetchOrders]);
+
   useEffect(() => { fetchOrders(); fetchSummary(); }, [fetchOrders]);
+
+  useEffect(() => {
+    const client = new Client({
+      webSocketFactory: () => new SockJS('/ws'),
+      reconnectDelay: 5000,
+      onConnect: () => {
+        setWsConnected(true);
+        client.subscribe('/topic/orders', () => {
+          fetchOrdersRef.current?.();
+          fetchSummary();
+        });
+      },
+      onDisconnect: () => setWsConnected(false),
+      onStompError: () => setWsConnected(false),
+    });
+    client.activate();
+    return () => { client.deactivate(); };
+  }, []);
 
   const handleAdvanceStatus = async (orderId, currentStatus) => {
     const nextStatus = NEXT_STATUS[currentStatus];
@@ -76,20 +100,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-charcoal text-white py-6">
-        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <h1 className="font-display text-2xl font-bold">🍽️ Command Center</h1>
-          <div className="flex gap-4">
-            <Link to="/admin/quick-entry" className="bg-secondary text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-secondary-dark">
-              + Quick Entry
-            </Link>
-            <Link to="/admin/menu" className="bg-white text-charcoal px-4 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100">
-              Menu Management
-            </Link>
-          </div>
-        </div>
-      </div>
+      <AdminNavbar title="Order Management" subtitle="Track, update, and fulfill orders" />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Summary Bar */}
@@ -111,8 +122,14 @@ export default function AdminOrdersPage() {
         )}
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-6">
-          <FiFilter className="self-center text-slate" />
+        <div className="flex flex-wrap gap-3 mb-6 items-center">
+          <FiFilter className="text-slate" />
+          <span className={`flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded-full ${
+            wsConnected ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${wsConnected ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+            {wsConnected ? 'Live' : 'Connecting...'}
+          </span>
           {['INDIVIDUAL', 'CATERING'].map((t) => (
             <button key={t} onClick={() => setFilter({ ...filter, orderType: filter.orderType === t ? null : t })}
               className={`px-3 py-1 rounded-full text-xs font-semibold border ${
@@ -126,7 +143,7 @@ export default function AdminOrdersPage() {
               className={`px-3 py-1 rounded-full text-xs font-semibold border ${
                 filter.orderSource === s ? 'bg-primary text-white border-primary' : 'border-gray-300 text-slate'
               }`}>
-              {s === 'WEB' ? '🌐 Web' : '📞 Phone'}
+              {s === 'WEB' ? 'Web' : 'Phone'}
             </button>
           ))}
         </div>
@@ -161,6 +178,18 @@ export default function AdminOrdersPage() {
                     {order.status.replace(/_/g, ' ')}
                   </span>
                 </div>
+
+                {/* Catering details */}
+                {order.orderType === 'CATERING' && (order.eventDate || order.guestCount) && (
+                  <div className="bg-secondary/10 rounded-lg px-3 py-2 mb-3 text-xs text-charcoal space-y-0.5">
+                    {order.eventDate && (
+                      <p><span className="font-semibold">Event:</span> {new Date(order.eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                    )}
+                    {order.guestCount && (
+                      <p><span className="font-semibold">Guests:</span> {order.guestCount}</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Items */}
                 <div className="text-sm text-slate mb-3">

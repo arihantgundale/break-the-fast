@@ -1,13 +1,28 @@
 import { useEffect, useState } from 'react';
-import { getMenuItems, adminToggleAvailability } from '../services/endpoints';
+import { getMenuItems, getCategories, adminToggleAvailability, adminCreateMenuItem } from '../services/endpoints';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import AdminNavbar from '../components/layout/AdminNavbar';
 
 export default function AdminMenuPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [creating, setCreating] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    description: '',
+    category: '',
+    price: '',
+    portionSize: '',
+    imageUrl: '',
+    isAvailable: 'true',
+    isSpicy: 'false',
+    heritageNote: '',
+    displayOrder: '',
+  });
 
   useEffect(() => {
+    getCategories().then((res) => setCategories(res.data)).catch(() => {});
     fetchItems();
   }, []);
 
@@ -29,18 +44,171 @@ export default function AdminMenuPage() {
     }
   };
 
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      const payload = {
+        name: form.name.trim(),
+        description: form.description.trim(),
+        category: form.category,
+        price: Number(form.price),
+        portionSize: form.portionSize.trim(),
+        imageUrl: form.imageUrl.trim(),
+        isAvailable: form.isAvailable === 'true',
+        isSpicy: form.isSpicy === 'true',
+        heritageNote: form.heritageNote.trim(),
+        displayOrder: Number(form.displayOrder),
+      };
+      await adminCreateMenuItem(payload);
+      toast.success('Menu item created');
+      setForm({
+        name: '',
+        description: '',
+        category: '',
+        price: '',
+        portionSize: '',
+        imageUrl: '',
+        isAvailable: 'true',
+        isSpicy: 'false',
+        heritageNote: '',
+        displayOrder: '',
+      });
+      fetchItems();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to create item');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-charcoal text-white py-6">
-        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <h1 className="font-display text-2xl font-bold">📋 Menu & Availability</h1>
-          <Link to="/admin/orders" className="text-secondary hover:text-white transition-colors font-semibold">
-            ← Back to Orders
-          </Link>
-        </div>
-      </div>
+      <AdminNavbar title="Menu & Availability" subtitle="Add, update, and manage products" />
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        <div className="card p-6">
+          <h2 className="font-semibold text-lg mb-4">Add New Product</h2>
+          <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Name</label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Category</label>
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                required
+                className="input-field"
+              >
+                <option value="" disabled>Select a category</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Price ($)</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.price}
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+                required
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Portion Size</label>
+              <input
+                type="text"
+                value={form.portionSize}
+                onChange={(e) => setForm({ ...form, portionSize: e.target.value })}
+                required
+                className="input-field"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-charcoal mb-1">Description</label>
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={3}
+                required
+                className="input-field"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-charcoal mb-1">Image URL</label>
+              <input
+                type="url"
+                value={form.imageUrl}
+                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                required
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Heritage Note</label>
+              <input
+                type="text"
+                value={form.heritageNote}
+                onChange={(e) => setForm({ ...form, heritageNote: e.target.value })}
+                required
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Display Order</label>
+              <input
+                type="number"
+                min="0"
+                value={form.displayOrder}
+                onChange={(e) => setForm({ ...form, displayOrder: e.target.value })}
+                required
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Available</label>
+              <select
+                value={form.isAvailable}
+                onChange={(e) => setForm({ ...form, isAvailable: e.target.value })}
+                required
+                className="input-field"
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Spicy</label>
+              <select
+                value={form.isSpicy}
+                onChange={(e) => setForm({ ...form, isSpicy: e.target.value })}
+                required
+                className="input-field"
+              >
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
+            </div>
+            <div className="md:col-span-2">
+              <button type="submit" disabled={creating} className="btn-primary w-full disabled:opacity-50">
+                {creating ? 'Creating...' : 'Add Product'}
+              </button>
+            </div>
+          </form>
+        </div>
+
         {loading ? (
           <div className="text-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
@@ -59,7 +227,7 @@ export default function AdminMenuPage() {
                     {item.imageUrl ? (
                       <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-2xl">🍛</span>
+                      <div className="w-full h-full bg-gray-200" />
                     )}
                   </div>
                   <div>
@@ -69,7 +237,7 @@ export default function AdminMenuPage() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  {item.isSpicy && <span className="spicy-badge text-[10px]">🌶️</span>}
+                  {item.isSpicy && <span className="spicy-badge text-[10px]">Spicy</span>}
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       type="checkbox"

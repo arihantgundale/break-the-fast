@@ -80,10 +80,10 @@ public class MenuService {
                 .price(request.getPrice())
                 .portionSize(request.getPortionSize())
                 .imageUrl(request.getImageUrl())
-                .isAvailable(request.getIsAvailable() != null ? request.getIsAvailable() : true)
-                .isSpicy(request.getIsSpicy() != null ? request.getIsSpicy() : false)
+                .isAvailable(request.getIsAvailable())
+                .isSpicy(request.getIsSpicy())
                 .heritageNote(request.getHeritageNote())
-                .displayOrder(request.getDisplayOrder() != null ? request.getDisplayOrder() : 0)
+                .displayOrder(request.getDisplayOrder())
                 .build();
         item = menuItemRepository.save(item);
         return mapToResponse(item);
@@ -101,12 +101,12 @@ public class MenuService {
         item.setDescription(request.getDescription());
         item.setCategory(request.getCategory());
         item.setPrice(request.getPrice());
-        if (request.getPortionSize() != null) item.setPortionSize(request.getPortionSize());
-        if (request.getImageUrl() != null) item.setImageUrl(request.getImageUrl());
-        if (request.getIsAvailable() != null) item.setIsAvailable(request.getIsAvailable());
-        if (request.getIsSpicy() != null) item.setIsSpicy(request.getIsSpicy());
-        if (request.getHeritageNote() != null) item.setHeritageNote(request.getHeritageNote());
-        if (request.getDisplayOrder() != null) item.setDisplayOrder(request.getDisplayOrder());
+        item.setPortionSize(request.getPortionSize());
+        item.setImageUrl(request.getImageUrl());
+        item.setIsAvailable(request.getIsAvailable());
+        item.setIsSpicy(request.getIsSpicy());
+        item.setHeritageNote(request.getHeritageNote());
+        item.setDisplayOrder(request.getDisplayOrder());
 
         item = menuItemRepository.save(item);
         return mapToResponse(item);

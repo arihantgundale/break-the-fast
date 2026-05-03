@@ -27,6 +27,8 @@ public class Customer {
 
     private String email;
 
+    private String passwordHash;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean whatsappOptIn = true;

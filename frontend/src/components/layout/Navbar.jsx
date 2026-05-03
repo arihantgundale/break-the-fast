@@ -22,7 +22,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <span className="text-2xl font-display font-bold text-primary">Break The Fast</span>
-            <span className="pure-veg-badge text-[10px]">🌿 Pure Veg</span>
+            <span className="pure-veg-badge text-[10px]">Pure Veg</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -45,7 +45,7 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center gap-3">
                 {role === 'ADMIN' ? (
-                  <Link to="/admin/orders" className="btn-primary text-sm py-2 px-4">Admin Panel</Link>
+                  <Link to="/admin/dashboard" className="btn-primary text-sm py-2 px-4">Admin Panel</Link>
                 ) : (
                   <Link to="/dashboard" className="flex items-center gap-1 text-slate hover:text-primary">
                     <FiUser className="w-5 h-5" />
@@ -76,7 +76,7 @@ export default function Navbar() {
           {user ? (
             <>
               {role === 'ADMIN' ? (
-                <Link to="/admin/orders" onClick={() => setMobileOpen(false)} className="block py-2 text-primary font-medium">Admin Panel</Link>
+                <Link to="/admin/dashboard" onClick={() => setMobileOpen(false)} className="block py-2 text-primary font-medium">Admin Panel</Link>
               ) : (
                 <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block py-2 text-slate">My Orders</Link>
               )}
