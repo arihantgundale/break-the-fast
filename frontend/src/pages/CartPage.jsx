@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { FiPlus, FiMinus, FiTrash2, FiArrowLeft } from 'react-icons/fi';
+import { FiPlus, FiMinus, FiTrash2, FiArrowLeft, FiShoppingCart } from 'react-icons/fi';
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, totalAmount, totalItems, clearCart } = useCart();

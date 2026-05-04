@@ -4,23 +4,28 @@ import { useAuth } from '../context/AuthContext';
 import { customerLogin, adminLogin } from '../services/endpoints';
 import toast from 'react-hot-toast';
 
+const PHONE_RE = /^\+1\d{10}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function LoginPage() {
   const { loginCustomer, loginAdmin } = useAuth();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Customer login
   const [phone, setPhone] = useState('+1');
   const [customerPassword, setCustomerPassword] = useState('');
-
-  // Admin flow
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // ─── Customer: Login ────────
   const handleCustomerLogin = async (e) => {
     e.preventDefault();
+    const errs = {};
+    if (!PHONE_RE.test(phone)) errs.phone = 'Enter a valid US number: +1 followed by 10 digits';
+    if (!customerPassword) errs.customerPassword = 'Password is required';
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     setLoading(true);
     try {
       const res = await customerLogin(phone, customerPassword);
@@ -34,9 +39,13 @@ export default function LoginPage() {
     }
   };
 
-  // ─── Admin Login ────────────
   const handleAdminLogin = async (e) => {
     e.preventDefault();
+    const errs = {};
+    if (!EMAIL_RE.test(email)) errs.email = 'Enter a valid email address';
+    if (!password) errs.password = 'Password is required';
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     setLoading(true);
     try {
       const res = await adminLogin(email, password);
@@ -50,6 +59,9 @@ export default function LoginPage() {
     }
   };
 
+  const inputCls = (field) =>
+    `input-field ${errors[field] ? 'border-red-500 focus:ring-red-500' : ''}`;
+
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center py-12">
       <div className="max-w-md w-full mx-4">
@@ -61,7 +73,7 @@ export default function LoginPage() {
         {/* Toggle Customer / Admin */}
         <div className="flex rounded-lg overflow-hidden mb-6 border border-gray-200">
           <button
-            onClick={() => setIsAdmin(false)}
+            onClick={() => { setIsAdmin(false); setErrors({}); }}
             className={`flex-1 py-3 text-sm font-semibold transition-colors ${
               !isAdmin ? 'bg-primary text-white' : 'bg-white text-slate'
             }`}
@@ -69,7 +81,7 @@ export default function LoginPage() {
             Customer
           </button>
           <button
-            onClick={() => setIsAdmin(true)}
+            onClick={() => { setIsAdmin(true); setErrors({}); }}
             className={`flex-1 py-3 text-sm font-semibold transition-colors ${
               isAdmin ? 'bg-primary text-white' : 'bg-white text-slate'
             }`}
@@ -80,59 +92,59 @@ export default function LoginPage() {
 
         <div className="card p-8">
           {isAdmin ? (
-            // ─── Admin Login Form ──────
-            <form onSubmit={handleAdminLogin} className="space-y-4">
+            <form onSubmit={handleAdminLogin} className="space-y-4" noValidate>
               <div>
                 <label className="block text-sm font-medium text-charcoal mb-1">Email</label>
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: '' })); }}
                   placeholder="admin@breakthefast.com"
-                  required
-                  className="input-field"
+                  className={inputCls('email')}
                 />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-charcoal mb-1">Password</label>
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); setErrors((p) => ({ ...p, password: '' })); }}
                   placeholder="••••••••"
-                  required
-                  className="input-field"
+                  className={inputCls('password')}
                 />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
               </div>
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-50">
                 {loading ? 'Signing in...' : 'Sign In as Admin'}
               </button>
             </form>
           ) : (
-            // ─── Customer Login Form ────
-            <form onSubmit={handleCustomerLogin} className="space-y-4">
+            <form onSubmit={handleCustomerLogin} className="space-y-4" noValidate>
               <div>
                 <label className="block text-sm font-medium text-charcoal mb-1">Phone Number</label>
                 <input
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: '' })); }}
                   placeholder="+1XXXXXXXXXX"
-                  required
-                  className="input-field"
+                  className={inputCls('phone')}
                 />
-                <p className="text-xs text-gray-400 mt-1">US phone number in format +1XXXXXXXXXX</p>
+                {errors.phone
+                  ? <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                  : <p className="text-xs text-gray-400 mt-1">US phone number: +1 followed by 10 digits</p>
+                }
               </div>
               <div>
                 <label className="block text-sm font-medium text-charcoal mb-1">Password</label>
                 <input
                   type="password"
                   value={customerPassword}
-                  onChange={(e) => setCustomerPassword(e.target.value)}
+                  onChange={(e) => { setCustomerPassword(e.target.value); setErrors((p) => ({ ...p, customerPassword: '' })); }}
                   placeholder="••••••••"
-                  required
-                  className="input-field"
+                  className={inputCls('customerPassword')}
                 />
+                {errors.customerPassword && <p className="text-red-500 text-xs mt-1">{errors.customerPassword}</p>}
               </div>
               <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-50">
                 {loading ? 'Signing in...' : 'Sign In'}

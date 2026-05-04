@@ -125,17 +125,17 @@ public class DataSeeder implements CommandLineRunner {
         createItem("Gulab Jamun", "Golden milk-solid dumplings soaked in rose-cardamom syrup. India's most loved dessert.",
                 MenuCategory.SWEETS_DESSERTS, "6.99", "4 pieces", true, false,
                 "Gulab Jamun traces its origins to Persian cuisine, perfected in Indian kitchens with milk-based kneading techniques.",
-                "https://images.unsplash.com/photo-1666190050946-7b2e56db4262?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777834811/download_7_gf2sb8.jpg");
 
         createItem("Rasmalai", "Soft cottage cheese discs in chilled saffron-cardamom milk, garnished with pistachios.",
                 MenuCategory.SWEETS_DESSERTS, "8.49", "3 pieces", true, false,
                 "A Bengali masterpiece, Rasmalai showcases India's unparalleled expertise in milk-based confections.",
-                "https://images.unsplash.com/photo-1571006694754-6a0ee05aee74?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777834812/download_8_k2i8wk.jpg");
 
         createItem("Kheer", "Slow-cooked rice pudding with saffron, cardamom, almonds, and raisins.",
                 MenuCategory.SWEETS_DESSERTS, "5.99", "8 oz", true, false,
                 "Kheer is one of the oldest Indian desserts, mentioned in Ayurvedic texts as both a delicacy and a healing food.",
-                "https://images.unsplash.com/photo-1633383718081-22ac93e3db65?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777834811/download_9_tv1or7.jpg");
 
         // ─── DINNER ────────────────────────────────────────────
         createItem("Paneer Tikka Masala", "Chargrilled paneer cubes in a rich tomato-cream sauce with aromatic spices.",
@@ -146,7 +146,7 @@ public class DataSeeder implements CommandLineRunner {
         createItem("Dal Makhani", "Black lentils slow-cooked overnight with butter, cream, and a blend of warming spices.",
                 MenuCategory.DINNER, "12.99", "12 oz", true, false,
                 "Dal Makhani from Punjab is the epitome of comfort food — patience is its secret ingredient.",
-                "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777834812/download_10_yiaoy9.jpg");
 
         createItem("Vegetable Biryani", "Fragrant basmati rice layered with seasoned vegetables, saffron, and fried onions.",
                 MenuCategory.DINNER, "13.99", "16 oz", true, true,
@@ -156,7 +156,7 @@ public class DataSeeder implements CommandLineRunner {
         createItem("Chole Bhature", "Spiced chickpea curry served with fluffy deep-fried bread.",
                 MenuCategory.DINNER, "12.99", "1 plate", true, true,
                 "A Punjabi street food legend, Chole Bhature is now a national favorite from Delhi's bustling lanes.",
-                "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777834811/download_11_vfyvwr.jpg");
 
         // ─── CATERING ──────────────────────────────────────────
         createItem("Party Platter — Snacks", "Assorted samosas, pakoras, spring rolls, and chutneys. Perfect for events.",
@@ -167,12 +167,12 @@ public class DataSeeder implements CommandLineRunner {
         createItem("Party Platter — Sweets", "Assorted gulab jamun, rasmalai, barfi, and ladoo.",
                 MenuCategory.CATERING, "59.99", "Serves 10-12", true, false,
                 "Indian sweets have been the heart of every celebration for millennia.",
-                "https://images.unsplash.com/photo-1666190050946-7b2e56db4262?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777834812/download_12_fer3vg.jpg");
 
         createItem("Full Catering Thali Package", "Complete meal per person: appetizer, 2 curries, dal, rice, bread, dessert.",
                 MenuCategory.CATERING, "24.99", "Per person (min 20)", true, false,
                 "Our catering thali brings the full Indian dining experience to your event.",
-                "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&h=400&fit=crop");
+                "https://res.cloudinary.com/dqzkwn4hm/image/upload/v1777834812/download_13_wpnh6v.jpg");
 
         log.info("Menu seeding complete — {} items created", menuItemRepository.count());
     }

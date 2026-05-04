@@ -74,7 +74,7 @@ export default function DashboardPage() {
                   <span className="text-primary font-bold text-lg">${Number(order.totalAmount).toFixed(2)}</span>
                 </div>
 
-                <OrderStatusStepper status={order.status} />
+                <OrderStatusStepper status={order.status} orderType={order.orderType} />
 
                 {order.estimatedReadyTime && (
                   <p className="text-sm text-secondary mt-3 text-center">

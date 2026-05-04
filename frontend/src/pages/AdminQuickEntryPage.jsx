@@ -13,6 +13,7 @@ export default function AdminQuickEntryPage() {
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
+  const [phoneError, setPhoneError] = useState('');
 
   useEffect(() => {
     getMenuItems().then((res) => setMenuItems(res.data.filter((i) => i.isAvailable)));
@@ -40,8 +41,15 @@ export default function AdminQuickEntryPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!phone || cart.length === 0) {
-      toast.error('Phone and at least one item are required');
+    const normalizedPhone = phone.startsWith('+1') ? phone.replace(/\D/g, '+').replace(/^\+/, '+') : `+1${phone.replace(/\D/g, '')}`;
+    const validPhone = /^\+1\d{10}$/.test(phone.replace(/[\s\-().]/g, '').replace(/^\+1/, '+1'));
+    if (!validPhone) {
+      setPhoneError('Enter a valid US phone number');
+      return;
+    }
+    setPhoneError('');
+    if (cart.length === 0) {
+      toast.error('Add at least one item to the order');
       return;
     }
     setLoading(true);
@@ -100,11 +108,12 @@ export default function AdminQuickEntryPage() {
               <input
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => { setPhone(e.target.value); setPhoneError(''); }}
                 placeholder="+1 (704) 657-4898"
-                className="input-field"
+                className={`input-field ${phoneError ? 'border-red-500' : ''}`}
                 required
               />
+              {phoneError && <p className="text-red-500 text-xs mt-1">{phoneError}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-charcoal mb-1">Customer Name (optional)</label>

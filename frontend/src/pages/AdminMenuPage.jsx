@@ -97,6 +97,7 @@ export default function AdminMenuPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
+                maxLength={100}
                 className="input-field"
               />
             </div>
@@ -118,7 +119,7 @@ export default function AdminMenuPage() {
               <label className="block text-sm font-medium text-charcoal mb-1">Price ($)</label>
               <input
                 type="number"
-                min="0"
+                min="0.01"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -143,6 +144,7 @@ export default function AdminMenuPage() {
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 rows={3}
                 required
+                maxLength={500}
                 className="input-field"
               />
             </div>

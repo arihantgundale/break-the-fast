@@ -23,6 +23,7 @@ public class OrderResponse {
     private UUID customerId;
     private String customerName;
     private String customerPhone;
+    private String customerEmail;
     private OrderType orderType;
     private OrderSource orderSource;
     private OrderStatus status;

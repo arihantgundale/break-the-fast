@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getMyOrder } from '../services/endpoints';
-import OrderStatusStepper from '../components/orders/OrderStatusStepper';
 import { FiCheckCircle } from 'react-icons/fi';
 
 export default function OrderConfirmationPage() {
@@ -30,9 +29,7 @@ export default function OrderConfirmationPage() {
         </p>
 
         <div className="card p-6 mb-8 text-left">
-          <OrderStatusStepper status={order.status} />
-
-          <div className="mt-6 divide-y">
+          <div className="divide-y">
             {order.items.map((item) => (
               <div key={item.id} className="py-3 flex justify-between">
                 <div>

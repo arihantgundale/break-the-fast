@@ -15,6 +15,13 @@ export default function CateringPage() {
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const minDate = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  })();
 
   useEffect(() => {
     getMenuItems('CATERING')
@@ -44,10 +51,13 @@ export default function CateringPage() {
       navigate('/login');
       return;
     }
-    if (selectedItems.length === 0) {
-      toast.error('Select at least one item');
-      return;
-    }
+    const errs = {};
+    if (selectedItems.length === 0) errs.items = 'Select at least one item';
+    if (!eventDate) errs.eventDate = 'Event date is required';
+    else if (eventDate < minDate) errs.eventDate = 'Event date must be at least one day from today';
+    if (!guestCount || Number(guestCount) < 1) errs.guestCount = 'Enter a valid guest count (minimum 1)';
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     setSubmitting(true);
     try {
       const res = await placeOrder({
@@ -174,10 +184,11 @@ export default function CateringPage() {
                   type="date"
                   required
                   value={eventDate}
-                  onChange={(e) => setEventDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="input-field"
+                  onChange={(e) => { setEventDate(e.target.value); setErrors((p) => ({ ...p, eventDate: '' })); }}
+                  min={minDate}
+                  className={`input-field ${errors.eventDate ? 'border-red-500' : ''}`}
                 />
+                {errors.eventDate && <p className="text-red-500 text-xs mt-1">{errors.eventDate}</p>}
               </div>
 
               <div>
@@ -187,10 +198,11 @@ export default function CateringPage() {
                   required
                   min="1"
                   value={guestCount}
-                  onChange={(e) => setGuestCount(e.target.value)}
-                  className="input-field"
+                  onChange={(e) => { setGuestCount(e.target.value); setErrors((p) => ({ ...p, guestCount: '' })); }}
+                  className={`input-field ${errors.guestCount ? 'border-red-500' : ''}`}
                   placeholder="e.g. 25"
                 />
+                {errors.guestCount && <p className="text-red-500 text-xs mt-1">{errors.guestCount}</p>}
               </div>
 
               <div>
@@ -223,10 +235,12 @@ export default function CateringPage() {
                 </div>
               )}
 
+              {errors.items && <p className="text-red-500 text-xs text-center">{errors.items}</p>}
+
               {user ? (
                 <button
                   type="submit"
-                  disabled={submitting || selectedItems.length === 0}
+                  disabled={submitting}
                   className="btn-primary w-full disabled:opacity-50"
                 >
                   {submitting ? 'Placing Order...' : 'Place Catering Order'}

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { adminGetOrders, adminGetSummary, adminUpdateStatus, adminCancelOrder } from '../services/endpoints';
 import toast from 'react-hot-toast';
-import { FiPhone, FiGlobe, FiClock, FiFilter } from 'react-icons/fi';
+import { FiPhone, FiGlobe, FiClock, FiFilter, FiUser, FiMail } from 'react-icons/fi';
 import AdminNavbar from '../components/layout/AdminNavbar';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -172,7 +172,17 @@ export default function AdminOrdersPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-slate">{order.customerName} · {order.customerPhone}</p>
+                    {order.orderType === 'CATERING' ? (
+                      <div className="mt-1 space-y-0.5">
+                        <p className="text-sm text-slate flex items-center gap-1"><FiUser className="w-3 h-3" /> {order.customerName}</p>
+                        <p className="text-sm text-slate flex items-center gap-1"><FiPhone className="w-3 h-3" /> {order.customerPhone}</p>
+                        {order.customerEmail && (
+                          <p className="text-sm text-slate flex items-center gap-1"><FiMail className="w-3 h-3" /> {order.customerEmail}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-slate">{order.customerName} · {order.customerPhone}</p>
+                    )}
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[order.status]}`}>
                     {order.status.replace(/_/g, ' ')}
@@ -205,21 +215,42 @@ export default function AdminOrdersPage() {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  {NEXT_STATUS[order.status] && (
-                    <button
-                      onClick={() => handleAdvanceStatus(order.id, order.status)}
-                      className="flex-1 bg-pure-veg text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors"
-                    >
-                      → {NEXT_STATUS[order.status].replace(/_/g, ' ')}
-                    </button>
-                  )}
-                  {order.status !== 'COMPLETED' && order.status !== 'CANCELLED' && (
-                    <button
-                      onClick={() => handleCancel(order.id)}
-                      className="px-3 py-2 rounded-lg text-sm font-semibold text-red-500 border border-red-200 hover:bg-red-50"
-                    >
-                      Cancel
-                    </button>
+                  {order.orderType === 'CATERING' ? (
+                    order.status === 'RECEIVED' && (
+                      <>
+                        <button
+                          onClick={() => handleAdvanceStatus(order.id, order.status)}
+                          className="flex-1 bg-pure-veg text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleCancel(order.id)}
+                          className="flex-1 py-2 rounded-lg text-sm font-semibold text-red-500 border border-red-200 hover:bg-red-50"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )
+                  ) : (
+                    <>
+                      {NEXT_STATUS[order.status] && (
+                        <button
+                          onClick={() => handleAdvanceStatus(order.id, order.status)}
+                          className="flex-1 bg-pure-veg text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors"
+                        >
+                          → {NEXT_STATUS[order.status].replace(/_/g, ' ')}
+                        </button>
+                      )}
+                      {order.status !== 'COMPLETED' && order.status !== 'CANCELLED' && (
+                        <button
+                          onClick={() => handleCancel(order.id)}
+                          className="px-3 py-2 rounded-lg text-sm font-semibold text-red-500 border border-red-200 hover:bg-red-50"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

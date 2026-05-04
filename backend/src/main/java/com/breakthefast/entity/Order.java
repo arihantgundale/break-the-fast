@@ -39,6 +39,8 @@ public class Order {
     @Column(nullable = false, length = 20)
     private String customerPhone;
 
+    private String customerEmail;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderType orderType;
