@@ -68,7 +68,7 @@ export default function CateringPage() {
         specialInstructions: specialInstructions || undefined,
       });
       toast.success('Catering order placed!');
-      navigate(`/order-confirmation/${res.data.id}`);
+      navigate(`/order-status/${res.data.id}`);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to place order');
     } finally {

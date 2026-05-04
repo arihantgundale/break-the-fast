@@ -8,6 +8,7 @@ export default function AdminMenuPage() {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [creating, setCreating] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -74,6 +75,7 @@ export default function AdminMenuPage() {
         heritageNote: '',
         displayOrder: '',
       });
+      setShowForm(false);
       fetchItems();
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to create item');
@@ -87,9 +89,32 @@ export default function AdminMenuPage() {
       <AdminNavbar title="Menu & Availability" subtitle="Add, update, and manage products" />
 
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
-        <div className="card p-6">
-          <h2 className="font-semibold text-lg mb-4">Add New Product</h2>
-          <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="section-title text-2xl">Menu Items</h2>
+            <p className="text-slate text-sm">Create and manage your menu</p>
+          </div>
+          <button type="button" className="btn-primary" onClick={() => setShowForm(true)}>
+            Add
+          </button>
+        </div>
+
+        {showForm && (
+          <div
+            className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-md px-4 py-10"
+            onClick={() => setShowForm(false)}
+          >
+            <div
+              className="card w-full max-w-3xl p-6 max-h-[85vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-lg">Add New Product</h2>
+                <button type="button" className="btn-outline" onClick={() => setShowForm(false)}>
+                  Close
+                </button>
+              </div>
+              <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-charcoal mb-1">Name</label>
               <input
@@ -98,6 +123,7 @@ export default function AdminMenuPage() {
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 maxLength={100}
+                placeholder="Butter Chicken"
                 className="input-field"
               />
             </div>
@@ -124,6 +150,7 @@ export default function AdminMenuPage() {
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
                 required
+                placeholder="12.99"
                 className="input-field"
               />
             </div>
@@ -134,6 +161,7 @@ export default function AdminMenuPage() {
                 value={form.portionSize}
                 onChange={(e) => setForm({ ...form, portionSize: e.target.value })}
                 required
+                placeholder="1 plate"
                 className="input-field"
               />
             </div>
@@ -145,6 +173,7 @@ export default function AdminMenuPage() {
                 rows={3}
                 required
                 maxLength={500}
+                placeholder="Creamy tomato gravy with tender chicken pieces."
                 className="input-field"
               />
             </div>
@@ -155,8 +184,10 @@ export default function AdminMenuPage() {
                 value={form.imageUrl}
                 onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
                 required
+                placeholder="https://..."
                 className="input-field"
               />
+              <p className="text-xs text-slate mt-1">Use a public image URL (JPG/PNG) for best results.</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-charcoal mb-1">Heritage Note</label>
@@ -165,6 +196,7 @@ export default function AdminMenuPage() {
                 value={form.heritageNote}
                 onChange={(e) => setForm({ ...form, heritageNote: e.target.value })}
                 required
+                placeholder="North Indian classic"
                 className="input-field"
               />
             </div>
@@ -176,8 +208,10 @@ export default function AdminMenuPage() {
                 value={form.displayOrder}
                 onChange={(e) => setForm({ ...form, displayOrder: e.target.value })}
                 required
+                placeholder="0"
                 className="input-field"
               />
+              <p className="text-xs text-slate mt-1">Lower numbers appear first.</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-charcoal mb-1">Available</label>
@@ -208,8 +242,10 @@ export default function AdminMenuPage() {
                 {creating ? 'Creating...' : 'Add Product'}
               </button>
             </div>
-          </form>
-        </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="text-center py-20">

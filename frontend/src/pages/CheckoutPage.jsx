@@ -32,7 +32,7 @@ export default function CheckoutPage() {
       const res = await placeOrder(orderData);
       clearCart();
       toast.success('Order placed successfully!');
-      navigate(`/order-confirmation/${res.data.id}`);
+      navigate(`/order-status/${res.data.id}`);
     } catch (err) {
       const msg = err.response?.data?.error || 'Failed to place order';
       toast.error(msg);

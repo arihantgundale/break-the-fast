@@ -91,7 +91,7 @@ export default function App() {
               }
             />
             <Route
-              path="/order-confirmation/:orderNumber"
+              path="/order-status/:id"
               element={
                 <CustomerLayout>
                   <PrivateRoute><OrderConfirmationPage /></PrivateRoute>

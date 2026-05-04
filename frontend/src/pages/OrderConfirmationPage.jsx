@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getMyOrder } from '../services/endpoints';
 import { FiCheckCircle } from 'react-icons/fi';
+import OrderStatusStepper from '../components/orders/OrderStatusStepper';
 
 export default function OrderConfirmationPage() {
   const { id } = useParams();
@@ -23,10 +24,20 @@ export default function OrderConfirmationPage() {
     <div className="min-h-screen bg-cream py-12">
       <div className="max-w-2xl mx-auto px-4 text-center">
         <FiCheckCircle className="w-16 h-16 mx-auto mb-6 text-pure-veg" />
-        <h1 className="font-display text-4xl font-bold text-primary mb-2">Order Confirmed!</h1>
+        <h1 className="font-display text-4xl font-bold text-primary mb-2">Order Status</h1>
         <p className="text-slate text-lg mb-8">
           Your order <span className="font-bold text-charcoal">{order.orderNumber}</span> has been received.
         </p>
+
+        <div className="card p-6 mb-8 text-left">
+          <h2 className="font-semibold text-lg mb-4">Current Status</h2>
+          <OrderStatusStepper status={order.status} orderType={order.orderType} />
+          {order.estimatedReadyTime && (
+            <p className="text-sm text-secondary mt-4 text-center">
+              Estimated ready: {new Date(order.estimatedReadyTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+            </p>
+          )}
+        </div>
 
         <div className="card p-6 mb-8 text-left">
           <div className="divide-y">
